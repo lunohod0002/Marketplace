@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ru" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+
+<body>
+
+</body>
+</html>
+
+<header th:fragment="header" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <div class="d-flex  align-items-center mt-2 px-5 ">
+        <h1 class="navbar-brand me-3 ">Маркетплейс</h1>
+        <form th:action="@{/products}"
+              th:method="get"
+              th:object="${form}"
+              class="d-flex me-3" style="width: 70%;">
+            <select class="form-select me-3" style="width: 35%; " th:field="*{category}">
+                <option th:each="category : ${categories}" th:value="${category}" th:text="${category} ">
+                </option>
+            </select>
+            <div class="input-group">
+                <input type="text"
+                       th:field="*{searchTerm}"
+                       class="form-control"
+                       placeholder="Искать на маркетплейсе"
+                />
+                <input type="hidden" th:field="*{page}"/>
+                <input type="hidden" th:field="*{size}"/>
+                <input type="hidden" th:field="*{sellerFilter}"  id="hiddenSellerFilter"/>
+
+                <input type="hidden" th:field="*{priceFilter}"  id="hiddenPriceFilter"/>
+                <input type="hidden" th:field="*{season}"  id="hiddenSeasonFilter" />
+
+                <button class="btn btn-primary" type="submit">Поиск</button>
+            </div>
+        </form>
+
+        <a class="btn btn-outline-secondary ms-3 me-2" type="button" th:href="@{/profile}">
+            <img src="/css/account.svg" alt="Account Icon" width="24" height="24">
+        </a>
+        <a class="btn btn-outline-secondary ms-3 me-2" type="button" th:href="@{/deals}"
+           sec:authorize="hasRole('CUSTOMER')">
+            <img src="/css/bi-cart.svg" alt="Cart Icon" width="24" height="24">
+        </a>
+        <a class="btn btn-outline-secondary ms-3 me-2" type="button" th:href="@{/products/addProduct}"
+           sec:authorize="hasRole('SELLER')">
+            <img src="/css/edit.svg" alt="Create Icon" width="24" height="24">
+        </a>
+        <form th:method="post" th:action="@{/users/logout}" style="display: inline;">
+            <button type="submit" class="btn btn-outline-secondary ms-3 me-2">
+                <img src="/css/exit.svg" alt="LogOut Icon" width="24" height="24">
+            </button>
+        </form>
+    </div>
+</header>

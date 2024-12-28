@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+
+<body class="d-flex flex-column h-100">
+<div th:replace="~{fragments/header}"></div>
+<main class="flex-grow-1">
+    <div class="container mt-2">
+        <div class="row " >
+            <div class="col-md-4 mb-3" >
+                <div class="bg-text border rounded p-3">
+                    <a>
+                        <img th:src="${model.product.photoURL}" class="img-fluid" style="width: 100%; height: auto; object-fit: cover;">
+                    </a>
+                </div>
+            </div>
+            <div th:if="${error}" class="error-message" style="color: red;">
+                <p th:text="${error}"></p>
+            </div>
+            <div class="col-md-8 mb-3"> <!-- Столбец с информацией о товаре -->
+                <div class="bg-text border rounded p-3">
+                    <h2 th:text="${model.product.title}">Название: Пример книги 1</h2>
+
+                    <h3>О товаре</h3>
+                    <h4 th:text="'Категория: ' + ${model.product.categoryName}">Категория: Пример категории</h4>
+                    <h4 th:text="'Сезон: ' + ${model.product.season}">Сезон: Пример Сезона</h4>
+
+                    <h4 th:text="'Продавец: ' + ${model.product.sellerUsername()}">Продавец: Пример продавца</h4>
+                    <h4 th:text="'Доступное кол-во: '+${model.product.quantity} +'шт.'">2021  ₽</h4>
+
+                    <h4 th:text="${model.product.price} + ' ₽'">2021  ₽</h4>
+                    <div class="mt-2">
+
+                        <form th:action="@{/products/buyProduct/{id}(id=${model.product.id})}" method="post">
+                            <button type="submit" class="btn btn-primary" >Купить</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row"> <!-- Новый ряд для отзывов -->
+            <div class="col-12 mb-3"> <!-- Столбец для отзывов -->
+                <div class="bg-text border rounded p-3">
+                    <h5>Отзывы</h5>
+                    <div th:each="comment : ${model.product.comments()}">
+                        <ul>
+                            <li th:text="'Текст: ' + ${comment.text}">Текст: ewef</li>
+                            <li th:text="'Оценка: ' + ${comment.mark}">Оценка: ewef</li>
+                            <li th:text="'Дата: ' + ${comment.dateArrival}">Дата: ewef</li>
+                            <li th:text="'Никнейм: ' + ${comment.username}">Никнейм: ewef</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>

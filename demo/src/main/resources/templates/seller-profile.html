@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head th:replace="fragments/head"/>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+    <header th:replace="fragments/header"/>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <div class="jumbotron text-center rounded col-md-12 align-self-center pt-5">
+                <div class="justify-content-center">
+                    <h1>Профиль</h1>
+                </div>
+                <div class="row bg-light rounded">
+                    <div class="col-md-6" th:object="${user}">
+                        <h2>Продавец</h2>
+                        <h4 th:text="'Email: ' + *{email}"></h4>
+                        <h4 th:text="'Никнейм: ' + *{username}"></h4>
+                        <h4 th:text="'Рейтинг: ' + *{rating}"></h4>
+                    </div>
+                    <div class="col-md-6"><img
+                            src="https://public.bnbstatic.com/image/pgc/202404/cd12ca2144a85cdc4ce75b28aad2540a.png"
+                            height="350px"></div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="jumbotron text-center rounded col-md-8 align-self-center pt-5">
+                    <h2 class="text-center text-dark mt-5">Все товары</h2>
+                    <div class='row mb-4 d-flex justify-content-around'>
+                        <div th:each="product : ${products}" class="col-md-4 d-flex flex-column bg-text mb-3 rounded">
+                            <div class="d-flex flex-column bg-text  border rounded">
+
+                                <h2 th:text="'Название: ' + *{product.title}"></h2>
+                                <h4 th:text="'Описание: ' + *{product.description}"></h4>
+                                <h4 th:text="'Категория: ' + *{product.category}"></h4>
+                                <h4 th:text="'Доступное кол-во: ' + *{product.quantity}"></h4>
+                                <h4 th:text="'Цена: ' + *{product.price}"></h4>
+                                <a th:href="@{/products/{id}(id=${product.id})}">
+                                    <img th:src="${product.photoURL}" class="img-fluid" style="object-fit: cover;"> </a>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</main>
+<footer th:replace="fragments/footer"/>
+</body>
+</html>

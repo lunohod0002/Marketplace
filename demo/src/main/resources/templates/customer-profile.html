@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" class="h-100" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head th:replace="fragments/head"/>
+<body class="d-flex flex-column h-100">
+<main class="flex-shrink-0">
+    <header th:replace="fragments/header"/>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2"></div>
+            <main class="jumbotron text-center rounded col-md-12 align-self-center pt-5">
+                <div class="justify-content-center">
+                    <h1>Профиль</h1>
+                </div>
+                <div class="row bg-light rounded">
+                    <div class="col-md-6" th:object="${user}">
+                        <h2>Покупатель</h2>
+                        <h4 th:text="'Email: ' + *{email}"></h4>
+                        <h4 th:text="'Никнейм: ' + *{username}"></h4>
+                        <h4 th:text="'Возраст: ' + *{age}"></h4>
+                        <h4 th:text="'Баланс: ' + *{balance}"></h4>
+
+                    </div>
+                    <div class="col-md-6"><img
+                            src="https://avatars.mds.yandex.net/i?id=afbcb9f61f8e760fc1a42547bfdd3b6b_l-8259800-images-thumbs&n=13"
+                            height="350px"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+</main>
+<footer th:replace="fragments/footer"/>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ru" class="h-100" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/head}"></head>
+
+<body>
+<div th:replace="~{fragments/header}"></div>
+
+<div class="d-flex mt-4 ms-3">
+    <aside class="p-4 bg-light border-end" style="width: 250px;">
+        <div>
+            <h4>Цена</h4>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="priceFilter" id="flexRadioDefault1"
+                       value="5000-10000000"
+                       th:checked="${form.priceFilter == '5000-10000000'}" onclick="updatePriceFilter(this.value)">
+                <label class="form-check-label" for="flexRadioDefault1">От 5000 рублей</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="priceFilter" id="flexRadioDefault2" value="1000-5000"
+                       th:checked="${form.priceFilter == '1000-5000'}" onclick="updatePriceFilter(this.value)">
+                <label class="form-check-label" for="flexRadioDefault2">От 1000 до 5000 рублей</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="priceFilter" id="flexRadioDefault3" value="500-1000"
+                       th:checked="${form.priceFilter == '500-1000'}" onclick="updatePriceFilter(this.value)">
+                <label class="form-check-label" for="flexRadioDefault3">От 500 до 1000 рублей</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="priceFilter" id="flexRadioDefault4" value="0-500"
+                       th:checked="${form.priceFilter == '0-500'}" onclick="updatePriceFilter(this.value)">
+                <label class="form-check-label" for="flexRadioDefault4">До 500 рублей</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="priceFilter" id="flexRadioDefault5" value=""
+                       th:checked="${form.priceFilter == '' || form.priceFilter == null}"
+                       onclick="updatePriceFilter(this.value)" checked>
+                <label class="form-check-label" for="flexRadioDefault5">Неважно</label>
+            </div>
+        </div>
+
+        <div>
+            <h4>Продавец</h4>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="sellerFilter" id="flexRadioDefault6" value="Apple"
+                       th:checked="${form.sellerFilter == 'Apple'}" onclick="updateSellerFilter(this.value)">
+                <label class="form-check-label" for="flexRadioDefault6">Apple</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="sellerFilter" id="flexRadioDefault7" value="Huawei"
+                       th:checked="${form.sellerFilter == 'Huawei'}" onclick="updateSellerFilter(this.value)">
+                <label class="form-check-label" for="flexRadioDefault7">Huawei</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="sellerFilter" id="flexRadioDefault8" value="Samsung"
+                       th:checked="${form.sellerFilter == 'Samsung'}" onclick="updateSellerFilter(this.value)">
+                <label class="form-check-label" for="flexRadioDefault8">Samsung</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="sellerFilter" id="flexRadioDefault9" value=""
+                       th:checked="${form.sellerFilter == '' || form.sellerFilter == null}"
+                       onclick="updateSellerFilter(this.value)" checked>
+                <label class="form-check-label" for="flexRadioDefault9">Неважно</label>
+            </div>
+        </div>
+        <div>
+            <h4>Сезон</h4>
+            <select th:field="${form.season}" id="season" class="form-control" onchange="updateSeasonFilter(this.value)">
+                <option value="" disabled selected>Все</option>
+                <option value="Зима" th:selected="${form.season == 'Зима'}">Зима</option>
+                <option value="Осень" th:selected="${form.season == 'Осень'}">Осень</option>
+                <option value="Весна" th:selected="${form.season == 'Весна'}">Весна</option>
+                <option value="Лето" th:selected="${form.season == 'Лето'}">Лето</option>
+            </select>
+            <input type="hidden" id="hiddenSeasonFilter" name="seasonFilter" value="">
+        </div>
+    </aside>
+    <main class="flex-grow-1">
+        <div class="container mt-2">
+            <div class="row">
+                <div th:if="${error}" class="error-message" style="color: red;">
+                    <p th:text="${error}"></p>
+                </div>
+                <div th:each="product : ${model.products()}" class="col-md-3 mb-3">
+                    <!-- 3 карточки в строке на устройствах среднего размера и больше -->
+                    <div class="d-flex flex-column bg-text border rounded">
+                        <a th:href="@{/products/{id}(id=${product.id})}">
+                            <img th:src="${product.photoURL}" class="img-fluid" style="object-fit: cover;"> </a>
+                        <h4 th:text="${product.price} +' ₽'">2021  ₽</h4>
+                        <h4 th:text="${product.title}">Название: Пример книги 1</h4>
+                        <div class="mt-2">
+
+                            <form th:action="@{/products/buyProduct/{id}(id=${product.id})}" method="post">
+                                <button type="submit" class="btn btn-primary">Купить в один клик</button>
+                            </form>
+                        </div>
+                        <div th:each="comment : ${product.comments()}">
+                            <h5>Отзыв</h5>
+                            <ul>
+                                <li th:text="'Текст: ' + ${comment.text}">Текст: ewef</li>
+                                <li th:text="'Оценка: ' + ${comment.mark}">Оценка: ewef</li>
+                                <li th:type="'Дата: ' + ${comment.dateArrival}">Дата: ewef</li>
+                                <li th:text="'Никнейм: ' + ${comment.username}">Никнейм: ewef</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+
+
+                <!-- Добавляйте дополнительные карточки по аналогии -->
+            </div>
+            <nav th:if="${model.totalPages > 1}" aria-label="Page navigation" class="pagination-sm">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item"
+                        th:each="pageNumber : ${#numbers.sequence(1, model.totalPages)}"
+                        th:classappend="${pageNumber == form.page} ? 'active'">
+                        <a class="page-link"
+                           th:href="@{/products(page=${pageNumber}, size=${form.size}, searchTerm=${form.searchTerm}, category=${form.category}, priceFilter=${form.priceFilter})}"
+                           th:text="${pageNumber}">1</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+    </main>
+
+</div>
+
+<!--<div id="myModal" class="modal-dialog">
+    <div class="modal-content">
+        <span onclick="closeModal()" style="cursor:pointer;float:right;">&times;</span>
+        <h2>Товар успешно куплен!</h2>
+    </div>
+</div>-->
+<footer th:replace="~{fragments/footer}"/>
+<div id="errorModal" class="modal" th:if="${error}">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <p th:text="${error}"></p>
+    </div>
+</div>
+</body>
+<script>
+    function updatePriceFilter(value) {
+        document.getElementById('hiddenPriceFilter').value = value;
+    }
+
+    function updateSellerFilter(value) {
+        document.getElementById('hiddenSellerFilter').value = value;
+    }
+
+    function updateSeasonFilter(value) {
+        document.getElementById('hiddenSeasonFilter').value = value;
+    }
+</script>
+</html>

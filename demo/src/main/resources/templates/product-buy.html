@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head}"></head>
+
+<body class="d-flex flex-column h-100">
+<div th:replace="~{fragments/header}"></div>
+<main class="flex-grow-1">
+    <div class="container mt-2">
+        <div th:each="product : ${model.products()}"> <!-- Цикл для отображения нескольких карточек -->
+            <div class="row product-card">
+                <div class="col-md-4"> <!-- Столбец с изображением -->
+                    <div class="bg-text border rounded p-3">
+                        <a>
+                            <img th:src="${product.photoURL}" class="img-fluid" alt="Изображение товара">
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-md-8"> <!-- Столбец с информацией о товаре -->
+                    <div class="bg-text border rounded p-3 product-info">
+                        <h2 th:text="${product.title}">Название: Пример книги</h2>
+                        <h3>О товаре</h3>
+                        <h4 th:text="'Категория: ' + ${product.categoryName}">Категория: Пример категории</h4>
+                        <h4 th:text="'Продавец: ' + ${product.sellerUsername()}">Продавец: Пример продавца</h4>
+                        <h4 th:text="'Доступное кол-во: ' + ${product.quantity} + 'шт.'">2021  ₽</h4>
+                        <h4 th:text="${product.price} + ' ₽'">2021  ₽</h4>
+                        <div class="mt-2">
+                            <a class="btn btn-primary" th:action="@{/products/createProduct/{id}(id=${product.id})}" >Купить</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<div id="myModal" class="modals">
+    <div class="modal-contents">
+        <span onclick="closeModal()" style="cursor:pointer;float:right;">&times;</span>
+        <h2>Товар успешно куплен!</h2>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!--
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Всплывающее окно</title>
+  <style>
+    .modal {
+      display: none; /* Скрыто по умолчанию */
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%; /* Ширина полностью */
+      height: 100%; /* Высота полностью */
+      overflow: auto; /* Если необходимо, добавляем прокрутку */
+      background-color: rgb(0,0,0); /* Черный фон с прозрачностью */
+      background-color: rgba(0,0,0,0.4); /* Черный фон с прозрачностью */
+    }
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto; /* 15% сверху и центрирование по горизонтали */
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%; /* Ширина содержимого */
+    }
+  </style>
+  <script>
+    function showModal() {
+      document.getElementById('myModal').style.display = "block";
+    }
+
+    function closeModal() {
+      document.getElementById('myModal').style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      if (event.target == document.getElementById('myModal')) {
+        closeModal();
+      }
+    }
+  </script>
+</head>
+<body>
+
+<h2>Пример всплывающего окна</h2>
+
+<button onclick="showModal()">Показать информацию</button>
+
+&lt;!&ndash; Модальное окно &ndash;&gt;
+<div id="myModal" class="modal">
+  <div class="modal-content">
+    <span onclick="closeModal()" style="cursor:pointer;float:right;">&times;</span>
+    <h2>Информация</h2>
+    <p>Здесь находится ваша информация.</p>
+  </div>
+</div>
+
+</body>
+</html>-->

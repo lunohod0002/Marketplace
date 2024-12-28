@@ -1,0 +1,55 @@
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="/css/bi-cart.svg" >
+    <link rel="stylesheet" href="/css/account.svg" >
+    <link rel="stylesheet" href="/css/edit.svg" >
+    <link rel="stylesheet" href="/css/exit.svg" >
+
+    <style>
+        .modal {
+            display: none; /* По умолчанию скрыто */
+            position: fixed; /* Окно фиксировано на экране */
+            z-index: 1; /* На переднем плане */
+            left: 0;
+            top: 0;
+            width: 100%; /* Полная ширина */
+            height: 100%; /* Полная высота */
+            overflow: auto; /* Скроллинг, если нужно */
+            background-color: rgb(0,0,0); /* Черный фон */
+            background-color: rgba(0,0,0,0.4); /* Полупрозрачный черный фон */
+        }
+
+        .modal-contents {
+            position: absolute;
+            top: 50%; /* Центрируем по вертикали */
+            left: 50%; /* Центрируем по горизонтали */
+            transform: translate(-50%, -50%); /* Сдвигаем на половину размера самих содержимого */
+            background-color: white; /* Белый фон */
+            padding: 20px; /* Отступы внутри */
+            border-radius: 5px; /* Закругление углов */
+        }
+    </style>
+    <script>
+        function showModal() {
+            document.getElementById('myModal').style.display = 'block';
+            // После показа модального окна можно вызвать функцию confirmPurchase
+        }
+
+        function closeModal() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+
+        function confirmPurchase() {
+            // Задержка перед отправкой формы (3 секунды)
+            setTimeout(function() {
+                closeModal(); // Закрываем модальное окно
+                document.getElementById('purchaseForm').submit(); // Отправляем форму
+            }, 3000);
+        }
+    </script>
+
+    <title>Best Marketplace</title>
+</head>
