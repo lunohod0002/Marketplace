@@ -51,8 +51,10 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
             "AND (:sellerName IS NULL OR p.seller.username = :sellerName) " +
             "AND (:categoryName IS NULL OR p.category.name = :categoryName)" +
             "AND (:categoryName IS NULL OR p.category.name = :categoryName)" +
-            "AND (:season IS NULL OR p.category.season = :season)")
-    Page<Product> findAllProductsByFiltersAndCategory(Pageable pageable, @Param("minPrice") Integer minPrice, @Param("maxPrice") Integer maxPrice, @Param("sellerName") String sellerName, @Param("categoryName") String categoryName, @Param("season") String season);
+            "AND (:season IS NULL OR p.category.season = :season)"+
+            "AND (:searchTerm IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) ")
+
+    Page<Product> findAllProductsByFiltersAndCategoryAndTitleIgnoreCase(Pageable pageable, @Param("minPrice") Integer minPrice, @Param("maxPrice") Integer maxPrice, @Param("sellerName") String sellerName, @Param("categoryName") String categoryName, @Param("season") String season, @Param("searchTerm") String  searchTerm);
 
 
     @Query("select p from Product p join p.category c where c.name=:categoryName ORDER BY p.id DESC")

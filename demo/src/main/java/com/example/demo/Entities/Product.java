@@ -99,7 +99,7 @@ public class Product extends BaseEntity {
         this.photoURL = photoURL;
     }
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
     public List<Comment> getComments() {
         return comments;
     }

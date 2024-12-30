@@ -113,25 +113,26 @@ public class ProductServiceImpl implements ProductService {
                 }
             }
         }
-        if (searchTerm != null && !searchTerm.isEmpty()) {
+            if (searchTerm != null && !searchTerm.isEmpty() || sellerFilter != null && !sellerFilter.isEmpty() || category != null && !category.isEmpty() || season != null && !season.isEmpty() || maxPrice!=null || minPrice!=null)  {
             Pageable pageable = PageRequest.of(page - 1, size, Sort.by("title"));
 
-            productPage = productRepository.findByTitleContainingIgnoreCase(searchTerm, pageable);
-            return productPage.map(product -> new ProductInfoDto(product.getId(), product.getTitle(), product.getPhotoURL(), product.getPrice(), product.getComments().stream().map(comment -> new CommentDto(comment.getTitle(), comment.getText(), comment.getDateAdded(), comment.getMark(), comment.getCustomer().getUsername())).toList()));
-
-        } else if (sellerFilter != null && !sellerFilter.isEmpty() || category != null && !category.isEmpty() || season != null && !season.isEmpty() || maxPrice!=null || minPrice!=null)  {
-            Pageable pageable = PageRequest.of(page - 1, size, Sort.by("title"));
-
-            productPage = productRepository.findAllProductsByFiltersAndCategory(
+            productPage = productRepository.findAllProductsByFiltersAndCategoryAndTitleIgnoreCase(
                     pageable,
                     minPrice,
                     maxPrice,
                     sellerFilter != null && !sellerFilter.isEmpty() ? sellerFilter : null,
                     category != null && !category.isEmpty() ? category : null,
-                    season != null && !season.isEmpty() ? season : null
-
+                    season != null && !season.isEmpty() ? season : null,
+                    searchTerm
 
             );
+            productPage.forEach(product -> {
+                List<Comment> comments = productRepository.findAllCommentsByProduct(
+                        product.getId(),
+                        PageRequest.of(0, 3)
+                );
+                product.setComments(comments); // Если у сущности Product есть поле comments
+            });
 
             return productPage.map(product -> new ProductInfoDto(product.getId(), product.getTitle(), product.getPhotoURL(), product.getPrice(), product.getComments().stream().map(comment -> new CommentDto(comment.getTitle(), comment.getText(), comment.getDateAdded(), comment.getMark(), comment.getCustomer().getUsername())).toList()));
 
