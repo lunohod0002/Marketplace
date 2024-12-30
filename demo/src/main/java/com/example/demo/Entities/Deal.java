@@ -11,6 +11,7 @@ public class Deal extends BaseEntity {
     private int totalCost;
     private LocalDate dateOfCreation;
     private Customer customer;
+    private List<DealProduct> dealProductList;
 
     public Deal(int totalCost, Customer customer) {
         this.totalCost = totalCost;
@@ -48,5 +49,14 @@ public class Deal extends BaseEntity {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
+    }
+    @OneToMany(mappedBy = "deal", fetch = FetchType.LAZY)
+
+    public List<DealProduct> getDealProductList() {
+        return dealProductList;
+    }
+
+    public void setDealProductList(List<DealProduct> dealProductList) {
+        this.dealProductList = dealProductList;
     }
 }

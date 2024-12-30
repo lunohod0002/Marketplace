@@ -41,11 +41,9 @@ public class WebPracticApplication {
 
         private final CommentRepository commentRepository;
 
-        private final CustomerRepository customerRepository;
 
         private final DealRepository dealRepository;
 
-        private final SellerRepository sellerRepository;
 
         private final UserRoleRepository userRoleRepository;
         private final UserRepository userRepository;
@@ -60,9 +58,7 @@ public class WebPracticApplication {
             this.dealProductRepository = dealProductRepository;
             this.categoryRepository = categoryRepository;
             this.commentRepository = commentRepository;
-            this.customerRepository = customerRepository;
             this.dealRepository = dealRepository;
-            this.sellerRepository = sellerRepository;
             this.userRoleRepository = userRoleRepository;
             this.passwordEncoder = passwordEncoder;
             this.userRepository=userRepository;
@@ -91,13 +87,15 @@ public class WebPracticApplication {
                 Customer customer = new Customer("Customer_%d".formatted(i),  "customer%d@example.com".formatted(i),passwordEncoder.encode("12345678"));
                 customer.setRoles(List.of(userRole));
                 userRepository.save(customer);
-                Category category = new Category(fakerRUS.name().name(), fakerRUS.book().title(), seasons.get(fakerRUS.random().nextInt(0, 3)));
+                Category category = new Category(fakerRUS.name().name(), seasons.get(fakerRUS.random().nextInt(0, 3)),fakerRUS.book().title());
                 categoryRepository.save(category);
 
                 Product product = new Product(fakerRUS.book().title(), fakerRUS.gameOfThrones().quote(), "https://ir.ozone.ru/s3/multimedia-1-p/wc600/7209533977.jpg", 10, fakerRUS.random().nextInt(100000), seller, category);
                 productRepository.save(product);
-                Comment comment = new Comment(fakerRUS.name().name(), fakerRUS.book().title(),fakerRUS.random().nextInt(1, 5), product, customer);
-                commentRepository.save(comment);
+                for (int j=0;j<=4;j++) {
+                    Comment comment = new Comment(fakerRUS.name().name(), fakerRUS.book().title(), fakerRUS.random().nextInt(1, 5), product, customer);
+                    commentRepository.save(comment);
+                }
                 Deal deal = new Deal(fakerRUS.random().nextInt(500, 10000),  customer);
                 dealRepository.save(deal);
                 DealProduct dealProduct = new DealProduct(fakerRUS.random().nextInt(1, 100), product);

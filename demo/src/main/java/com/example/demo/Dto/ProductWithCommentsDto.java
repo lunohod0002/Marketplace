@@ -1,63 +1,34 @@
 package com.example.demo.Dto;
 
 import com.example.demo.Dto.comment.CommentDto;
+import com.example.demo.Entities.Comment;
+import com.example.demo.Entities.Product;
 
 import java.util.List;
 
-public class ProductWithCommentsDto {
-    private String name;
-    private String description;
-    private String photoURL;
-    private int quantity;
-    private int price;
-    private List<CommentDto> comments;
+public class ProductWithCommentsDTO {
+    private Product product;
+    private List<Comment> lastComments;
 
-    public String getName() {
-        return name;
+    public ProductWithCommentsDTO(Product product, List<Comment> lastComments) {
+        this.product = product;
+        this.lastComments = lastComments;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Product getProduct() {
+        return product;
     }
 
-    public String getDescription() {
-        return description;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public List<Comment> getLastComments() {
+        return lastComments;
     }
 
-    public String getPhotoURL() {
-        return photoURL;
+    public void setLastComments(List<Comment> lastComments) {
+        this.lastComments = lastComments;
     }
-
-    public void setPhotoURL(String photoURL) {
-        this.photoURL = photoURL;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-
-    public List<CommentDto> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<CommentDto> comments) {
-        this.comments = comments;
-    }
+    // геттеры и сеттеры
 }

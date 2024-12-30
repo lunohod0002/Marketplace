@@ -1,5 +1,6 @@
 package com.example.demo.services.Impl;
 
+import com.example.demo.Dto.ProductWithCommentsDTO;
 import com.example.demo.Dto.comment.CommentDto;
 import com.example.demo.Dto.DealProductDto;
 import com.example.demo.Dto.ProductDto;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -80,7 +82,7 @@ public class ProductServiceImpl implements ProductService {
             return null;
         }
         Product p = product.orElse(null);
-        return new ProductDto(p.getId(), p.getTitle(), p.getDescription(), p.getPhotoURL(), p.getPrice(), p.getQuantity(), p.getCategory().getName(),p.getCategory().getSeason(), p.getSeller().getUsername(), p.getComments().stream().map(comment -> new CommentDto(comment.getTitle(), comment.getText(), comment.getDateAdded(), comment.getMark(), comment.getCustomer().getUsername())).toList());
+        return new ProductDto(p.getId(), p.getTitle(), p.getDescription(), p.getPhotoURL(), p.getPrice(), p.getQuantity(), p.getCategory().getName(), p.getCategory().getSeason(), p.getSeller().getUsername(), p.getComments().stream().map(comment -> new CommentDto(comment.getTitle(), comment.getText(), comment.getDateAdded(), comment.getMark(), comment.getCustomer().getUsername())).toList());
     }
 
     @Override
@@ -94,7 +96,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Page<ProductInfoDto> getAllProducts(String searchTerm, String priceFilter, String category, String sellerFilter, String season, int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by("title"));
         Page<Product> productPage;
         Integer minPrice = null;
         Integer maxPrice = null;
@@ -108,15 +109,19 @@ public class ProductServiceImpl implements ProductService {
                     minPrice = Integer.parseInt(parts[0].trim());
                     maxPrice = Integer.parseInt(parts[1].trim());
                 } catch (NumberFormatException e) {
-                    // Если парсинг не удался, можно оставить minPrice и maxPrice равными null
-                    // Либо обработать по-другому в зависимости от вашей логики
+                    System.out.println("Exception");
                 }
             }
         }
         if (searchTerm != null && !searchTerm.isEmpty()) {
+            Pageable pageable = PageRequest.of(page - 1, size, Sort.by("title"));
+
             productPage = productRepository.findByTitleContainingIgnoreCase(searchTerm, pageable);
-        }
-        else {
+            return productPage.map(product -> new ProductInfoDto(product.getId(), product.getTitle(), product.getPhotoURL(), product.getPrice(), product.getComments().stream().map(comment -> new CommentDto(comment.getTitle(), comment.getText(), comment.getDateAdded(), comment.getMark(), comment.getCustomer().getUsername())).toList()));
+
+        } else if (sellerFilter != null && !sellerFilter.isEmpty() || category != null && !category.isEmpty() || season != null && !season.isEmpty() || maxPrice!=null || minPrice!=null)  {
+            Pageable pageable = PageRequest.of(page - 1, size, Sort.by("title"));
+
             productPage = productRepository.findAllProductsByFiltersAndCategory(
                     pageable,
                     minPrice,
@@ -125,34 +130,30 @@ public class ProductServiceImpl implements ProductService {
                     category != null && !category.isEmpty() ? category : null,
                     season != null && !season.isEmpty() ? season : null
 
+
             );
+
+            return productPage.map(product -> new ProductInfoDto(product.getId(), product.getTitle(), product.getPhotoURL(), product.getPrice(), product.getComments().stream().map(comment -> new CommentDto(comment.getTitle(), comment.getText(), comment.getDateAdded(), comment.getMark(), comment.getCustomer().getUsername())).toList()));
+
+
         }
-        return productPage.map(product -> new ProductInfoDto(product.getId(), product.getTitle(), product.getPhotoURL(), product.getPrice(), product.getComments().stream().map(comment -> new CommentDto(comment.getTitle(), comment.getText(), comment.getDateAdded(), comment.getMark(), comment.getCustomer().getUsername())).toList()));
+        else {
+            Pageable pageable = PageRequest.of(page - 1, size);
+            Page<Product> products = productRepository.findTopSellingProducts(pageable);
+            products.forEach(product -> {
+                List<Comment> comments = productRepository.findAllCommentsByProduct(
+                        product.getId(),
+                        PageRequest.of(0, 3)
+                );
+                product.setComments(comments); // Если у сущности Product есть поле comments
+            });
+            return products.map(product -> new ProductInfoDto(product.getId(), product.getTitle(), product.getPhotoURL(), product.getPrice(), product.getComments().stream().map(comment -> new CommentDto(comment.getTitle(), comment.getText(), comment.getDateAdded(), comment.getMark(), comment.getCustomer().getUsername())).toList()));
 
-/*        List<ProductInfoDto> productInfoDtos=new ArrayList<>();
-        for (Product product : productPage.getContent()) {
-            System.out.println(product.getPrice() + " "+ priceFilter);
-            if (priceFilter.equals("0-500")) {
-                if (product.getPrice() <= 500){
-                    productInfoDtos.add(new ProductInfoDto(product.getId(),product.getTitle(), product.getPhotoURL(), product.getPrice(),product.getComments().stream().map(comment -> new CommentDto(comment.getTitle(),comment.getText(),comment.getDateAdded(),comment.getMark(), comment.getCustomer().getUsername())).toList()));
-                }
-            }
-            if (priceFilter.equals("500-1000")) {
-                if (product.getPrice() <= 1000 && product.getPrice() >= 500){
-                    productInfoDtos.add(new ProductInfoDto(product.getId(),product.getTitle(), product.getPhotoURL(), product.getPrice(),product.getComments().stream().map(comment -> new CommentDto(comment.getTitle(),comment.getText(),comment.getDateAdded(),comment.getMark(), comment.getCustomer().getUsername())).toList()));
-                }
-            }
-            if (priceFilter.equals("1000-5000")) {
-                if (product.getPrice() <= 5000 && product.getPrice() >= 1000){
-                    productInfoDtos.add(new ProductInfoDto(product.getId(),product.getTitle(), product.getPhotoURL(), product.getPrice(),product.getComments().stream().map(comment -> new CommentDto(comment.getTitle(),comment.getText(),comment.getDateAdded(),comment.getMark(), comment.getCustomer().getUsername())).toList()));
-                }
-            }
-            if (priceFilter.equals("5000")) {
-                if (product.getPrice() >= 5000 ){
-                    productInfoDtos.add(new ProductInfoDto(product.getId(),product.getTitle(), product.getPhotoURL(), product.getPrice(),product.getComments().stream().map(comment -> new CommentDto(comment.getTitle(),comment.getText(),comment.getDateAdded(),comment.getMark(), comment.getCustomer().getUsername())).toList()));
-                }*/
 
+        }
+// В случае, если productPage не был установлен в предыдущих условиях, выполняем преобразование для него
     }
+
 
 
     @Override
@@ -201,13 +202,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDto> getAllProductsByCategoryWithThreeLastComments(String categoryName) {
-       /* Page<ProductInfoDto> products = productRepository.findAllProductsByCategory(categoryName);
-        for (ProductInfoDto product : products) {
-            List<Comment> comments = commentRepository.findCommentsByProductIdSorted(product.id());
-            product.comments()=comments;
-        }*/
-        //return products.stream().map(product -> modelMapper.map(product, ProductDto.class)).toList();
-        return null;
+            return null;
     }
 
     @Override
@@ -215,16 +210,6 @@ public class ProductServiceImpl implements ProductService {
         return List.of();
     }
 
-    /*@Override
-    public List<ProductDto> getAllMostSoldProducts() {
-        List<Product> products = productRepository.findAllMostSoldProducts();
-        List<ProductDto> productDtoList = new ArrayList<>();
-        for (Product product : products) {
-            ProductDto productDto = modelMapper.map(product, ProductDto.class);
-            productDtoList.add(productDto);
-        }
-        return productDtoList;
-    }*/
 
     @Override
     public List<ProductDto> getAllMostSoldProductsInThisSeason(String seasonName) {

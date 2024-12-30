@@ -1,11 +1,11 @@
 package com.example.demo.controllers.Impl;
 
-import com.example.demo.Dto.ProductSearchForm;
 import com.example.demo.Entities.*;
 import com.example.demo.Repositories.*;
+import org.example.controllers.UserController;
+import org.example.input.ProductsSearchForm;
 import org.example.viewmodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,43 +16,27 @@ import java.security.Principal;
 import java.util.Arrays;
 import java.util.List;
 
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 
 @Controller()
 @RequestMapping("")
 
-public class UserController {
+public class UserControllerImpl implements UserController {
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
 
     private SellerRepository sellerRepository;
-    @Autowired
 
-    private CategoryRepository categoryRepository;
     @Autowired
 
     private ProductRepository productRepository;
     @Autowired
     private UserRepository userRepository;
 
-/*    @GetMapping("/profile")
-    public String getUserProfile(@ModelAttribute("form") ProductSearchForm form, Model model){
-        var searchTerm = form.searchTerm() != null ? form.searchTerm() : "";
-        var page = form.page() != null ? form.page() : 1;
-        var size = form.size() != null ? form.size() : 3;
-        form = new ProductSearchForm(searchTerm, page, size);
-        Customer customer=customerRepository.findByUsername("George").orElse(null);
-        CustomerViewModel viewModel=new CustomerViewModel(customer.getEmail(),customer.getUsername(), customer.getAge(),customer.getBalance());
-        model.addAttribute("user",viewModel);
-        model.addAttribute("form", form);
-        return "profile";
-    }*/
-
-
+    @Override
     @GetMapping("/profile")
 
-    public String getUserProfile(@ModelAttribute("form") ProductSearchForm form, Model model, Principal principal) {
+    public String getUserProfile(@ModelAttribute("form") ProductsSearchForm form, Model model, Principal principal) {
         var searchTerm = form.searchTerm() != null ? form.searchTerm() : "";
         var page = form.page() != null ? form.page() : 1;
         var size = form.size() != null ? form.size() : 8;
@@ -62,7 +46,7 @@ public class UserController {
         var sellerFilter = form.sellerFilter() != null ? form.sellerFilter() : "";
 
         var dateFilter = form.season() != null ? form.season() : "";
-        form = new ProductSearchForm(searchTerm, priceFilter, sellerFilter, dateFilter, page, size, category);
+        form = new ProductsSearchForm(searchTerm, priceFilter, sellerFilter, dateFilter, page, size, category);
 
         var categories = Arrays.asList("Все категории", "Электроника", "Одежда", "Концтовары", "Обувь");
         model.addAttribute("categories", categories);
@@ -89,9 +73,9 @@ public class UserController {
         return "redirect:/users/login";
 
     }
-
+    @Override
     @GetMapping("/deals")
-    public String getUserDeals(@ModelAttribute("form") ProductSearchForm form, Model model, Principal principal) {
+    public String getUserDeals(@ModelAttribute("form") ProductsSearchForm form, Model model, Principal principal) {
         var searchTerm = form.searchTerm() != null ? form.searchTerm() : "";
         var page = form.page() != null ? form.page() : 1;
         var size = form.size() != null ? form.size() : 8;
@@ -101,7 +85,7 @@ public class UserController {
         var sellerFilter = form.sellerFilter() != null ? form.sellerFilter() : "";
 
         var dateFilter = form.season() != null ? form.season() : "";
-        form = new ProductSearchForm(searchTerm, priceFilter, sellerFilter, dateFilter, page, size, category);
+        form = new ProductsSearchForm(searchTerm, priceFilter, sellerFilter, dateFilter, page, size, category);
 
         Customer customer = customerRepository.findByUsername(principal.getName()).orElse(null);
         var categories = Arrays.asList("Все категории", "Электроника", "Одежда", "Концтовары", "Обувь");

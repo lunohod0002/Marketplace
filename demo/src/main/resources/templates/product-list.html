@@ -65,8 +65,9 @@
         </div>
         <div>
             <h4>Сезон</h4>
-            <select th:field="${form.season}" id="season" class="form-control" onchange="updateSeasonFilter(this.value)">
-                <option value="" disabled selected>Все</option>
+            <select th:field="${form.season}" id="season" class="form-control"
+                    onchange="updateSeasonFilter(this.value)">
+                <option value="" selected>Все</option>
                 <option value="Зима" th:selected="${form.season == 'Зима'}">Зима</option>
                 <option value="Осень" th:selected="${form.season == 'Осень'}">Осень</option>
                 <option value="Весна" th:selected="${form.season == 'Весна'}">Весна</option>
@@ -127,12 +128,6 @@
 
 </div>
 
-<!--<div id="myModal" class="modal-dialog">
-    <div class="modal-content">
-        <span onclick="closeModal()" style="cursor:pointer;float:right;">&times;</span>
-        <h2>Товар успешно куплен!</h2>
-    </div>
-</div>-->
 <footer th:replace="~{fragments/footer}"/>
 <div id="errorModal" class="modal" th:if="${error}">
     <div class="modal-content">

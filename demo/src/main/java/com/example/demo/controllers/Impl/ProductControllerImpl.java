@@ -8,7 +8,9 @@ import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.example.controllers.ProductController;
 import org.example.input.ProductCreateInputModel;
+import org.example.input.ProductsSearchForm;
 import org.example.input.UserRegisterInputModel;
 import org.example.viewmodel.*;
 import org.modelmapper.ModelMapper;
@@ -29,7 +31,7 @@ import java.util.List;
 @Controller
 @RequestMapping("/products")
 @EnableCaching
-public class ProductControllerImpl {
+public class ProductControllerImpl  {
     private final ProductServiceImpl productService;
     private final CustomerServiceImpl customerService;
     private final CategoryServiceImpl categoryService;
@@ -43,9 +45,10 @@ public class ProductControllerImpl {
         this.customerService = customerService;
         this.sellerService = sellerService;
     }
+
     @GetMapping()
     @Cacheable(value = "/products")
-    public String getAllProduct(@ModelAttribute("form") ProductSearchForm form, Model model, Principal principal) {
+    public String getAllProduct(@ModelAttribute("form") ProductsSearchForm form, Model model, Principal principal) {
         LOG.log(Level.INFO, "Show all products for" + principal.getName());
         var searchTerm = form.searchTerm() != null ? form.searchTerm() : "";
         var page = form.page() != null ? form.page() : 1;
@@ -53,15 +56,15 @@ public class ProductControllerImpl {
         var category = form.category() != null ? form.category() : "";
         var priceFilter = form.priceFilter() != null ? form.priceFilter() : "";
         var sellerFilter = form.sellerFilter() != null ? form.sellerFilter() : "";
-        var dateFilter = form.season() != null ? form.season() : "";
+        var seasonFilter = form.season() != null ? form.season() : "";
 
         System.out.println(priceFilter
         );
-        if (category.equals("Все категории")){
-            category="";
+        if (category.equals("Все категории")) {
+            category = "";
         }
-        form = new ProductSearchForm(searchTerm,priceFilter,sellerFilter, dateFilter, page, size, category);
-        var productsPage = productService.getAllProducts(searchTerm, priceFilter,  category, sellerFilter,dateFilter,page, size);
+        form = new ProductsSearchForm(searchTerm, priceFilter, sellerFilter, seasonFilter, page, size, category);
+        var productsPage = productService.getAllProducts(searchTerm, priceFilter, category, sellerFilter, seasonFilter, page, size);
 
 
         var productViewModels = productsPage.stream()
@@ -74,7 +77,7 @@ public class ProductControllerImpl {
                 productViewModels,
                 productsPage.getTotalPages()
         );
-        var categories = Arrays.asList("Все категории","Электроника", "Одежда", "Канцтовары", "Обувь");
+        var categories = Arrays.asList("Все категории", "Электроника", "Одежда", "Канцтовары", "Обувь");
 
         model.addAttribute("categories", categories);
         model.addAttribute("model", viewModel);
@@ -89,7 +92,7 @@ public class ProductControllerImpl {
 
 
     @GetMapping("/{productID}")
-    public String getProductsByName(@ModelAttribute("form") ProductSearchForm form, @PathVariable(name = "productID") int productID, Model model) {
+    public String getProductsByName(@ModelAttribute("form") ProductsSearchForm form, @PathVariable(name = "productID") int productID, Model model) {
         var searchTerm = form.searchTerm() != null ? form.searchTerm() : "";
         var page = form.page() != null ? form.page() : 1;
         var size = form.size() != null ? form.size() : 8;
@@ -98,7 +101,7 @@ public class ProductControllerImpl {
         var sellerFilter = form.sellerFilter() != null ? form.sellerFilter() : "";
 
         var season = form.season() != null ? form.season() : "";
-        form = new ProductSearchForm(searchTerm,priceFilter,sellerFilter, season, page, size, category);
+        form = new ProductsSearchForm(searchTerm, priceFilter, sellerFilter, season, page, size, category);
 
 
         var productPage = productService.getProductDtoById(productID);
@@ -109,7 +112,7 @@ public class ProductControllerImpl {
         var viewModel = new ProductDetailsViewModel(
                 createBaseViewModel(productPage.title()),
                 productViewModel);
-        var categories = Arrays.asList("Все категории","Электроника", "Одежда", "Концтовары", "Обувь");
+        var categories = Arrays.asList("Все категории", "Электроника", "Одежда", "Концтовары", "Обувь");
         model.addAttribute("categories", categories);
 
         model.addAttribute("model", viewModel);
@@ -122,7 +125,7 @@ public class ProductControllerImpl {
 
     @Transactional
     @PostMapping("/buyProduct/{productID}")
-    public String buyProduct(@ModelAttribute("form") ProductSearchForm form, @PathVariable("productID") int productID, Model model, RedirectAttributes redirectAttributes, Principal principal) throws InterruptedException {
+    public String buyProduct(@ModelAttribute("form") ProductsSearchForm form, @PathVariable("productID") int productID, Model model, RedirectAttributes redirectAttributes, Principal principal) throws InterruptedException {
         var searchTerm = form.searchTerm() != null ? form.searchTerm() : "";
         var page = form.page() != null ? form.page() : 1;
         var size = form.size() != null ? form.size() : 8;
@@ -131,7 +134,7 @@ public class ProductControllerImpl {
         var sellerFilter = form.sellerFilter() != null ? form.sellerFilter() : "";
 
         var dateFilter = form.season() != null ? form.season() : "";
-        form = new ProductSearchForm(searchTerm,priceFilter,sellerFilter, dateFilter, page, size, category);
+        form = new ProductsSearchForm(searchTerm, priceFilter, sellerFilter, dateFilter, page, size, category);
 
         Thread.sleep(3000);
         Customer customer = customerService.getCustomerByUsername(principal.getName());
@@ -172,11 +175,11 @@ public class ProductControllerImpl {
     }
 
     @GetMapping("/addProduct")
-    public String addProductPage(@ModelAttribute("form") ProductSearchForm form, Model model) {
+    public String addProductPage(@ModelAttribute("form") ProductsSearchForm form, Model model) {
         var searchTerm = form.searchTerm() != null ? form.searchTerm() : "";
         var page = form.page() != null ? form.page() : 1;
         var size = form.size() != null ? form.size() : 3;
-        var categories = Arrays.asList("Все категории","Электроника", "Одежда", "Концтовары", "Обувь");
+        var categories = Arrays.asList("Все категории", "Электроника", "Одежда", "Концтовары", "Обувь");
 
         model.addAttribute("categories", categories);
         model.addAttribute("form", form);

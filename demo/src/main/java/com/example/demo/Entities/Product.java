@@ -19,15 +19,16 @@ public class Product extends BaseEntity {
     private List<Comment> comments;
     private Category category;
 
-    public Product(String title, String description, String photoURL, int quantity, int price, Seller seller,Category category) {
+    public Product(String title, String description, String photoURL, int quantity, int price, Seller seller, Category category) {
         this.title = title;
         this.description = description;
         this.photoURL = photoURL;
         this.quantity = quantity;
         this.price = price;
+        this.dealProductList=null;
         this.seller = seller;
-        this.deleted=false;
-        this.category=category;
+        this.deleted = false;
+        this.category = category;
     }
 
     protected Product() {
@@ -50,6 +51,7 @@ public class Product extends BaseEntity {
     public void setDescription(String description) {
         this.description = description;
     }
+
     @Column(name = "deleted", nullable = false)
     public boolean isDeleted() {
         return deleted;
@@ -97,7 +99,7 @@ public class Product extends BaseEntity {
         this.photoURL = photoURL;
     }
 
-    @OneToMany(mappedBy = "product",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER)
     public List<Comment> getComments() {
         return comments;
     }
@@ -105,6 +107,7 @@ public class Product extends BaseEntity {
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
+
     @ManyToOne
     @JoinColumn(name = "category_id", nullable = false)
     public Category getCategory() {
@@ -114,5 +117,12 @@ public class Product extends BaseEntity {
     public void setCategory(Category category) {
         this.category = category;
     }
-
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    public List<DealProduct> getDealProductList() {
+        return dealProductList;
     }
+
+    public void setDealProductList(List<DealProduct> dealProductList) {
+        this.dealProductList = dealProductList;
+    }
+}

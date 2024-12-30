@@ -3,6 +3,7 @@ package com.example.demo.controllers.Impl;
 
 import com.example.demo.services.Impl.AuthService;
 import jakarta.validation.Valid;
+import org.example.controllers.AuthController;
 import org.example.input.UserRegisterInputModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -20,13 +21,13 @@ import java.security.Principal;
 
 @Controller
 @RequestMapping("/users")
-public class AuthController {
+public class AuthControllerImpl implements AuthController {
 
     private AuthService authService;
 
 
     @Autowired
-    public AuthController(AuthService authService) {
+    public AuthControllerImpl(AuthService authService) {
         this.authService = authService;
     }
 
@@ -73,23 +74,5 @@ public class AuthController {
     }
 }
 
-/*    @GetMapping("/profile")
-    public String profile(Principal principal, Model model) {
-        String username = principal.getName();
-        User user = authService.getUser(username);
-
-        UserProfileView userProfileView = new UserProfileView(
-                username,
-                user.getEmail(),
-                user.getFullName(),
-                user.getAge()
-        );
-
-        model.addAttribute("user", userProfileView);
-
-        return "profile";
-        }
-    }
 
 
-*/

@@ -25,8 +25,7 @@ public class DealProduct extends BaseEntity{
         this.quantity = quantity;
     }
 
-    @ManyToOne()
-    @JoinColumn(name = "product_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne
     public Product getProduct() {
         return product;
     }
@@ -35,8 +34,7 @@ public class DealProduct extends BaseEntity{
         this.product = product;
     }
 
-    @ManyToOne()
-    @JoinColumn(name = "deal_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne
     public Deal getDeal() {
         return deal;
     }

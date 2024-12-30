@@ -9,6 +9,8 @@ import com.example.demo.Entities.Seller;
 import com.example.demo.services.Impl.CategoryServiceImpl;
 import com.example.demo.services.Impl.ProductServiceImpl;
 import com.example.demo.services.Impl.SellerServiceImpl;
+import org.example.controllers.SellerController;
+import org.example.input.ProductUpdateInputModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +21,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/seller")
-public class SellerControllerImpl {
+public class SellerControllerImpl implements SellerController {
     private final ProductServiceImpl productService;
     private final CategoryServiceImpl categoryService;
     private final SellerServiceImpl sellerService;
@@ -30,9 +32,9 @@ public class SellerControllerImpl {
         this.categoryService = categoryService;
         this.sellerService = sellerService;
     }
-
+    @Override
     @PutMapping("/updateProduct/{productID}")
-    public String updateProduct(@RequestBody UpdateProductDto productDto, @PathVariable int productID) {
+    public String updateProduct(@RequestBody ProductUpdateInputModel productDto, @PathVariable int productID) {
         Product product = productService.getProductById(productID);
 
         if (product == null) {
@@ -50,27 +52,19 @@ public class SellerControllerImpl {
         productService.updateProduct(product);
         return "OK";
     }
-
-    @GetMapping("/getProduct/{productID}")
-    public Product getProduct(@PathVariable int productID) {
-        Product product = productService.getProductById(productID);
-        if (product == null) {
-            return null;
-        }
-        return product;
-
-    }
-
+    @Override
     @GetMapping("/getProducts/{sellerId}")
-    public List<ProductDto> getProducts(@PathVariable int sellerId) {
+    public String getProducts(@PathVariable int sellerId) {
         Seller seller = sellerService.getSellerById(sellerId);
         if (seller == null) {
             return null;
 
         }
-        return productService.getSellerProducts(sellerId);
+        List<ProductDto> productDtoList=productService.getSellerProducts(sellerId);
+        return "OK";
 
     }
+    @Override
     @DeleteMapping("/deleteSeller/{sellerID}")
     public String deleteSeller(@PathVariable int sellerID) {
         if (!sellerService.existsById(sellerID)) {
@@ -80,23 +74,6 @@ public class SellerControllerImpl {
         return "OK";
 
     }
-
-/*    @GetMapping("/profile")
-    public String profile(Principal principal, Model model) {
-        String username = principal.getName();
-        Seller user = sellerService.getUser(username);
-
-        UserProfileView userProfileView = new UserProfileView(
-                username,
-                user.getEmail(),
-                user.getFullName(),
-                user.getAge()
-        );
-
-        model.addAttribute("user", userProfileView);
-
-        return "profile";
-    }*/
 
 
 }

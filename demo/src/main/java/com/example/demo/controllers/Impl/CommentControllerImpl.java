@@ -6,6 +6,7 @@ import com.example.demo.Entities.Product;
 import com.example.demo.services.Impl.CommentServiceImpl;
 import com.example.demo.services.Impl.CustomerServiceImpl;
 import com.example.demo.services.Impl.ProductServiceImpl;
+import org.example.controllers.CommentController;
 import org.example.input.CommentInputModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/comments")
-public class CommentControllerImpl {
+public class CommentControllerImpl implements CommentController {
     private final CommentServiceImpl commentService;
     private final ProductServiceImpl productService;
     private final CustomerServiceImpl customerService;
@@ -23,6 +24,7 @@ public class CommentControllerImpl {
         this.productService = productService;
         this.customerService = customerService;
     }
+    @Override
 
     @PostMapping("/addComment/{productID}")
     public String addComment(@PathVariable("productID") int productID, @RequestParam int customerID, @RequestBody CommentInputModel commentDto) {
@@ -41,6 +43,8 @@ public class CommentControllerImpl {
         return "OK";
     }
 
+    @Override
+
     @PutMapping("/changeComment/{commentID}")
 
     public String changeComment(@PathVariable("commentID") int commentID, @RequestBody CommentInputModel commentInputModel) {
@@ -54,6 +58,7 @@ public class CommentControllerImpl {
         commentService.updateComment(comment);
         return "OK";
     }
+    @Override
     @DeleteMapping("/deleteComment/{commentID}")
 
     public String deleteComment(@PathVariable("commentID") int commentID) {
